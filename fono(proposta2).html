@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fonoaudiólogo Educacional - Gramado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Beige and Sage (Warm neutrals, muted green accents) -->
+    <!-- Application Structure Plan: The SPA uses a top-down thematic structure. It starts with the new synthetic description, followed by interactive tabs for the (refined) 5 key areas, reflecting the strategic focus. It then presents a dashboard element (Doughnut chart) to visualize the estimated focus of the role, aligned with the Nível I/II/III Eixos. The core 'Annex' content is structured in the required 3-tab interactive section (Eixo I: Estratégico/Formação, Eixo II: Avaliação/Articulação, Eixo III: Gestão/Políticas) using numbered lists. It concludes with specific municipal requirements and conditions. This structure guides the user from the role's mission to its detailed responsibilities and logistical framework. -->
+    <!-- Visualization & Content Choices:
+        - Report Info: 5 key domains of SLP. Goal: Show high-level strategic scope (Nível I/II focus). Viz: Tabbed content blocks (refined text). Interaction: Click-to-reveal tabs. Justification: Organizes dense text and aligns with the new non-clinical focus. Method: JS toggle.
+        - Report Info: Nature of SLP work (Preventive, Detecção, Gestão). Goal: Visualize workload distribution. Viz: Doughnut Chart (updated data). Interaction: Hover (tooltip). Justification: Quantifies the new distribution emphasizing prevention and management. Library: Chart.js (Canvas).
+        - Report Info: Annex structure (3 categories, numbered lists). Goal: Present official attributions clearly. Viz: 3-tab section with numbered lists. Interaction: Click-to-reveal tabs. Justification: Directly mirrors the required output format for the public position, using numbering for clarity. Method: JS toggle.
+        - Report Info: Requirements and Conditions. Goal: Present logistical constraints. Viz: Dedicated text section with bold emphasis. Justification: Fulfills specific prompt requirement regarding provision and work conditions. Method: HTML/Tailwind.
+        -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdfcf9;
+        }
+        .tab-btn {
+            @apply px-4 py-2 font-medium text-sm rounded-lg transition-all duration-300 whitespace-nowrap;
+        }
+        .tab-btn.active {
+            @apply bg-teal-700 text-white shadow-md;
+        }
+        .tab-btn:not(.active) {
+            @apply text-gray-600 hover:bg-teal-50;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .list-decimal-custom {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-teal-800 text-white p-6 shadow-lg">
+        <div class="container mx-auto max-w-6xl text-center">
+            <h1 class="text-3xl md:text-4xl font-bold mb-2">Fonoaudiólogo Educacional</h1>
+            <h2 class="text-xl md:text-2xl text-teal-200">(Especialista em Comunicação Humana, Inclusão e Suporte Pedagógico)</h2>
+        </div>
+    </header>
+
+    <main class="container mx-auto max-w-6xl p-4 md:p-8">
+
+        <section id="intro" class="mb-12 bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <h3 class="text-xl font-bold text-teal-800 mb-3 text-center">Descrição Sintética do Cargo</h3>
+            <p class="text-lg text-gray-700 leading-relaxed text-center max-w-4xl mx-auto">
+                O Fonoaudiólogo Educacional é o profissional de nível superior responsável por promover a Educação e a saúde comunicativa (linguagem, voz, audição, fala, fluência e motricidade orofacial) no contexto escolar, atuando de forma consultiva, colaborativa e estratégica junto às equipes educacionais, gestores e famílias. Sua missão principal é garantir a acessibilidade comunicacional e pedagógica para o desenvolvimento integral de todos os educandos, por meio de ações de prevenção, detecção (rastreio), formação continuada e gestão ativa do fluxo intersetorial com a Rede de Saúde e Assistência Social.
+            </p>
+            <div class="mt-4 p-3 bg-red-50 text-red-700 font-semibold rounded-lg text-center border border-red-200">
+                <span class="mr-2">&#9888;</span> ATENÇÃO: É vedada a realização de atendimento clínico/terapêutico individual ou em grupo no ambiente escolar.
+            </div>
+        </section>
+
+        <section id="dominios" class="mb-12 p-6 rounded-lg">
+            <h2 class="text-2xl font-bold text-teal-800 mb-6 text-center">Domínios de Atuação e Níveis de Atenção</h2>
+            <p class="text-center text-gray-600 mb-6">A atuação é focada nos Níveis I (Promoção/Prevenção) e II (Detecção/Intercepção), sempre visando a consultoria e o suporte pedagógico, e não o atendimento clínico.</p>
+            
+            <div id="tabs-domains-nav" class="flex flex-wrap justify-center gap-2 mb-6">
+                <button class="tab-btn domain-tab active" data-tab="domain-1">Nível I: Formação e Currículo</button>
+                <button class="tab-btn domain-tab" data-tab="domain-2">Nível I: TA e Inclusão</button>
+                <button class="tab-btn domain-tab" data-tab="domain-3">Nível I: Saúde Vocal e Auditiva</button>
+                <button class="tab-btn domain-tab" data-tab="domain-4">Nível II: Rastreio e Avaliação</button>
+                <button class="tab-btn domain-tab" data-tab="domain-5">Nível II: Intersetorialidade Ativa</button>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-lg">
+                <div id="domain-1" class="tab-content domain-content active">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Consultoria, Desenvolvimento Linguístico e Alfabetização</h3>
+                    <p class="text-gray-700 leading-relaxed">Atuação consultiva com equipes pedagógicas para flexibilizar e adaptar o currículo, promovendo ativamente o desenvolvimento da linguagem oral e escrita. Foco na execução de projetos para desenvolver pré-requisitos essenciais de alfabetização, como a consciência fonológica.</p>
+                </div>
+                <div id="domain-2" class="tab-content domain-content">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Acessibilidade e Tecnologia Assistiva (TA/CAA)</h3>
+                    <p class="text-gray-700 leading-relaxed">Capacitar educadores e famílias no uso, adaptação e implementação de Tecnologia Assistiva e Comunicação Aumentativa e Alternativa (CAA), garantindo a acessibilidade comunicacional e pedagógica, especialmente para estudantes PAEE (incluindo TEA e Dislexia).</p>
+                </div>
+                <div id="domain-3" class="tab-content domain-content">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Promoção da Saúde Vocal e Auditiva Escolar</h3>
+                    <p class="text-gray-700 leading-relaxed">Realizar ações de educação e orientação (Nível I) para educadores sobre saúde vocal e ergonomia comunicativa, prevenindo riscos ocupacionais. Colaborar com o PSE e orientar sobre ruído escolar e fatores de risco auditivo.</p>
+                </div>
+                <div id="domain-4" class="tab-content domain-content">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Rastreio Fonoaudiológico e Avaliação Institucional (Nível II)</h3>
+                    <p class="text-gray-700 leading-relaxed">Planejar e aplicar rotinas de rastreios sistemáticos (auditivos, de linguagem e fala) para detecção precoce de indicadores de dificuldade. Participar da avaliação e diagnóstico institucional (não-clínico) para dar suporte técnico ao PAEE e à elaboração do PEI.</p>
+                </div>
+                <div id="domain-5" class="tab-content domain-content">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Gestão de Fluxo e Intersetorialidade Ativa</h3>
+                    <p class="text-gray-700 leading-relaxed">Assegurar a articulação formal e sistemática entre SME, Rede de Atenção à Saúde (RAS) e Assistência Social. Gerenciar os fluxos de Referência (encaminhamento para diagnóstico clínico/terapêutico) e Contrarreferência (recebimento de laudos para planejamento educacional).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="visao-pratica" class="mb-12">
+            <h2 class="text-2xl font-bold text-teal-800 mb-6 text-center">Alocação de Foco no Cargo (Estimativa Percentual)</h2>
+            <p class="text-center text-gray-600 mb-6 max-w-2xl mx-auto">Esta visualização reflete a prioridade do cargo, que é predominantemente estratégica e preventiva (Nível I), seguida pela gestão de fluxo e detecção (Nível II) e, por fim, pela gestão política/administrativa (Eixo III).</p>
+            <div class="chart-container">
+                <canvas id="practiceChart"></canvas>
+            </div>
+        </section>
+
+        <section id="anexo-atribuicoes" class="mb-12">
+            <h2 class="text-2xl font-bold text-teal-800 mb-6 text-center">Descrição Analítica das Atribuições por Eixo</h2>
+            <p class="text-center text-gray-600 mb-6">As atribuições detalhadas são divididas em três eixos, conforme a estrutura do Anexo de Atribuições do cargo.</p>
+
+            <div id="tabs-anexo-nav" class="flex flex-wrap justify-center gap-2 mb-6">
+                <button class="tab-btn anexo-tab active" data-tab="anexo-1">Eixo I: Estratégico e de Formação (Nível I)</button>
+                <button class="tab-btn anexo-tab" data-tab="anexo-2">Eixo II: Avaliação e Articulação (Nível II)</button>
+                <button class="tab-btn anexo-tab" data-tab="anexo-3">Eixo III: Gestão e Políticas Públicas</button>
+            </div>
+
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg border border-gray-200 min-h-[500px]">
+                <div id="anexo-1" class="tab-content anexo-content active">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">I. Eixo Estratégico e de Formação (Promoção e Prevenção – Nível I)</h3>
+                    <ol class="list-decimal-custom space-y-3 text-gray-700 ml-4">
+                        <li><strong class="font-semibold">Consultoria Colaborativa e Adaptação Curricular:</strong> Atuar como consultor técnico, oferecendo consultoria colaborativa e assessoria às equipes pedagógicas (professores do Ensino Comum, AEE, e gestores) para definir estratégias pedagógicas e didáticas. Isso inclui a colaboração no planejamento, flexibilização, adaptação e temporalidade curricular para favorecer a comunicação e a aprendizagem de todos os alunos.</li>
+                        <li><strong class="font-semibold">Desenvolvimento Linguístico e Alfabetização:</strong> Promover ativamente o desenvolvimento e aprimoramento da linguagem em suas diferentes modalidades (oral, escrita, sinalizada e visuoespacial). Desenvolver e executar projetos e oficinas, em parceria com professores, focando em habilidades cognitivo-linguísticas e nos pré-requisitos essenciais para a alfabetização, como a consciência fonológica.</li>
+                        <li><strong class="font-semibold">Saúde Vocal e Auditiva Escolar:</strong> Promover a saúde vocal e a prevenção de riscos ocupacionais, realizando ações de educação e orientação dirigidas aos educadores (como campanhas de higiene vocal e ergonomia comunicativa), visando minimizar o absenteísmo e as doenças laborais. Promover a saúde auditiva, orientando a comunidade escolar sobre ruídos e fatores de risco, e colaborar com programas intersetoriais, como o Programa Saúde na Escola (PSE).</li>
+                        <li><strong class="font-semibold">Acessibilidade e Tecnologia Assistiva (TA/CAA):</strong> Promover a inclusão efetiva, capacitando educadores e famílias no uso e adaptação de Tecnologia Assistiva (TA) e de sistemas de Comunicação Aumentativa e Alternativa (CAA) (baixa e alta tecnologia). Participar da definição dos melhores meios e técnicas de intervenção para estudantes Público-Alvo da Educação Especial (PAEE), como alunos com TEA e Dislexia.</li>
+                        <li><strong class="font-semibold">Orientação à Comunidade:</strong> Realizar ações formativas, educativas e informativas sobre assuntos pertinentes à Fonoaudiologia para a comunidade escolar (educandos, famílias e demais atores sociais). Orientar famílias sobre o desenvolvimento de linguagem e funções orofaciais (incluindo respiração, mastigação e deglutição), fortalecendo o vínculo escola-família e o sucesso escolar.</li>
+                    </ol>
+                </div>
+                <div id="anexo-2" class="tab-content anexo-content">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">II. Eixo de Avaliação e Articulação Intersetorial (Detecção e Gestão de Fluxo – Nível II)</h3>
+                    <ol class="list-decimal-custom space-y-3 text-gray-700 ml-4" start="6">
+                        <li><strong class="font-semibold">Rastreio Fonoaudiológico Global:</strong> Planejar e aplicar rotinas de rastreios/triagens fonoaudiológicas sistemáticas (utilizando protocolos e equipamentos padronizados) para a detecção precoce de indicadores de dificuldades de audição, linguagem e fala.</li>
+                        <li><strong class="font-semibold">Avaliação Institucional e PEI:</strong> Integrar a equipe multidisciplinar para dar suporte técnico ao PAEE. Participar da elaboração da avaliação e diagnóstico institucional das situações de ensino-aprendizagem (não-clínico) e colaborar na construção do Plano Educacional Individualizado (PEI). Auxiliar a equipe pedagógica na identificação e condução das demandas fonoaudiológicas apresentadas pela comunidade escolar.</li>
+                        <li><strong class="font-semibold">Gestão de Fluxo e Intersetorialidade Ativa:</strong> Assegurar a articulação sistemática e formal (intersetorial) entre a Secretaria Municipal de Educação (SME) e a Rede de Atenção à Saúde (RAS) e Assistência Social.
+                            <ul class="list-disc list-inside ml-6 mt-1">
+                                <li>Referência: Gerenciar o encaminhamento formal dos alunos identificados por meio do rastreio para exames, avaliação diagnóstica clínica e acompanhamentos terapêuticos nas unidades de referência (Saúde).</li>
+                                <li>Contrarreferência: Garantir o fluxo de contrarreferência das informações clínicas e laudos da Rede de Saúde para o planejamento educacional da SME, monitorando a resposta da rede e evitando que o aluno seja prejudicado pela falta de suporte informado.</li>
+                            </ul>
+                        </li>
+                        <li><strong class="font-semibold">Acompanhamento no Território:</strong> Realizar orientações e intervenções no território (incluindo visitas domiciliares) em abordagem multiprofissional/interdisciplinar para influenciar a permanência e o sucesso escolar, bem como promover a saúde e prevenir agravos.</li>
+                    </ol>
+                </div>
+                <div id="anexo-3" class="tab-content anexo-content">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">III. Eixo de Gestão e Formulação de Políticas Públicas</h3>
+                    <ol class="list-decimal-custom space-y-3 text-gray-700 ml-4" start="10">
+                        <li><strong class="font-semibold">Assessoria e Planejamento Estratégico:</strong> Oferecer assessoria técnica e consultoria educacional à SME e unidades de ensino, com base em evidências científicas e numa perspectiva crítico-reflexiva, para subsidiar a tomada de decisões.</li>
+                        <li><strong class="font-semibold">Gestão de Políticas Públicas:</strong> Participar da análise de dados da rede de ensino, da elaboração das metas, do planejamento e execução de programas políticos da Educação, em consonância com as políticas federais, estaduais e municipais (ex: PME, PNEE). Integrar instâncias de controle social (Conselhos e Fóruns de Educação).</li>
+                        <li><strong class="font-semibold">Documentação Técnica:</strong> Elaborar, acompanhar e emitir relatórios e pareceres técnicos de caráter educacional/institucional (não-clínico), documentando o desempenho das funções comunicativas e os processos de avaliação dos educandos que indicam necessidade de apoio educacional especializado.</li>
+                        <li><strong class="font-semibold">Atividades Correlatas:</strong> Executar outras tarefas pertinentes à área de atuação, como o desenvolvimento de pesquisas, produção de materiais informativos e o uso de programas de informática para gestão de dados.</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <section id="requisitos-condicoes" class="mb-12 bg-teal-50 p-6 md:p-8 rounded-lg shadow-inner">
+            <h2 class="text-2xl font-bold text-teal-800 mb-4 text-center">Requisitos para Provimento e Condições de Trabalho</h2>
+            <div class="grid md:grid-cols-2 gap-8 mt-6">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3 border-b border-teal-300 pb-1">Requisitos para Provimento</h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li>Graduação em Fonoaudiologia, devidamente reconhecida pelo Ministério da Educação (MEC).</li>
+                        <li>Registro ativo e regular no Conselho Regional de Fonoaudiologia (CRFa).</li>
+                        <li><strong class="font-semibold">Especialização:</strong> Especialização *lato sensu* em Educação, Educação Especial ou áreas correlatas (mínimo 360 horas), demonstrando saberes aprofundados para atuar no contexto educacional.</li>
+                    </ul>
+                    <div class="mt-4 p-3 bg-teal-100 text-teal-800 font-semibold rounded-lg border border-teal-300">
+                        <p>Recrutamento: Concurso Público (cargo efetivo ou regime estatutário).</p>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3 border-b border-teal-300 pb-1">Condições de Trabalho (Específicas do Município)</h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li><strong class="font-semibold">Carga Horária:</strong> Semanal de 30 horas.</li>
+                        <li>Sujeito a deslocamentos e atuação em diferentes unidades escolares/setoriais.</li>
+                        <li>Envolvimento em atividades intersetoriais ativas (Saúde, Assistência Social e terceiro setor).</li>
+                        <li>Sujeito a plantões, uso de uniforme, atendimento ao público, atendimentos presenciais/remotos e <strong class="font-semibold">visitas domiciliares</strong>, conforme a política do município e a natureza das ações de orientação no território.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 p-6 mt-12">
+        <div class="container mx-auto max-w-6xl text-center text-sm">
+            <p>&copy; 2025 Proposta de Estruturação de Cargo. Secretaria da Educação de Gramado.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const initTabs = (navSelector, contentSelector, tabClass) => {
+                const nav = document.getElementById(navSelector);
+                if (!nav) return;
+
+                nav.addEventListener('click', (e) => {
+                    const clickedButton = e.target.closest(tabClass);
+                    if (!clickedButton || clickedButton.classList.contains('active')) {
+                        return;
+                    }
+
+                    const tabId = clickedButton.dataset.tab;
+                    
+                    nav.querySelectorAll(tabClass).forEach(btn => {
+                        btn.classList.remove('active', 'bg-teal-700', 'text-white', 'shadow-md');
+                        btn.classList.add('text-gray-600', 'hover:bg-teal-50');
+                    });
+                    
+                    clickedButton.classList.add('active', 'bg-teal-700', 'text-white', 'shadow-md');
+                    clickedButton.classList.remove('text-gray-600', 'hover:bg-teal-50');
+
+                    document.querySelectorAll(contentSelector).forEach(content => {
+                        content.classList.remove('active');
+                    });
+
+                    const activeContent = document.getElementById(tabId);
+                    if (activeContent) {
+                        activeContent.classList.add('active');
+                    }
+                });
+            };
+
+            initTabs('tabs-domains-nav', '.domain-content', '.domain-tab');
+            initTabs('tabs-anexo-nav', '.anexo-content', '.anexo-tab');
+
+            const ctx = document.getElementById('practiceChart');
+            if (ctx) {
+                const practiceData = {
+                    labels: [
+                        'Eixo I: Estratégico e de Formação (Nível I)',
+                        'Eixo II: Rastreio e Avaliação Institucional',
+                        'Eixo II: Gestão de Fluxo Intersetorial',
+                        'Eixo III: Gestão e Políticas Públicas',
+                        'Eixo III: Documentação Técnica e Correlatas'
+                    ],
+                    datasets: [{
+                        label: 'Alocação de Foco (Estimativa)',
+                        data: [45, 20, 15, 10, 10], 
+                        backgroundColor: [
+                            '#0D9488', 
+                            '#0F766E', 
+                            '#115E59', 
+                            '#134E4A', 
+                            '#042f2e'  
+                        ],
+                        borderColor: '#fdfcf9',
+                        borderWidth: 3,
+                        hoverOffset: 4
+                    }]
+                };
+
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: practiceData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: {
+                                        size: 12
+                                    },
+                                    color: '#374151',
+                                    padding: 15,
+                                    boxWidth: 12
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed !== null) {
+                                            label += context.parsed + '%';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '60%'
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
